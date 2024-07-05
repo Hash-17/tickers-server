@@ -1,11 +1,15 @@
+//index.js
 const express = require("express");
 const axios = require("axios");
 const dotenv = require("dotenv");
+const cors = require("cors");
 dotenv.config();
 const ticketsModel = require("./model/ticketsSchema");
 const connectToDB = require("./db");
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -16,7 +20,7 @@ const fetchData = async () => {
     const response = await axios.get("https://api.wazirx.com/api/v2/tickers");
     const tickers = Object.values(response.data).slice(0, 10);
 
-    await ticketsModel.deleteMany(); // Clear existing data
+    await ticketsModel.deleteMany({}); // Clear existing data
 
     tickers.forEach(async (ticker) => {
       const tickerData = new ticketsModel({
